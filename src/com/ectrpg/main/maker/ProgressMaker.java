@@ -1,0 +1,155 @@
+package com.ectrpg.main.maker;
+
+import com.ectrpg.controller.Keyboard;
+import com.ectrpg.controller.service.Resource;
+import com.ectrpg.db.Localization;
+import com.ectrpg.event.EventManager;
+import com.ectrpg.model.LocationPair;
+import com.ectrpg.model.entity.Entity;
+import com.ectrpg.model.fight.buff.SpeedBuff;
+import com.ectrpg.model.map.item.Item;
+import com.ectrpg.model.mission.Progress;
+import com.ectrpg.view.GameFrame;
+import com.ectrpg.view.dialog.SimpleTalkingDialog;
+import com.ectrpg.view.dialog.TalkingDialog;
+import com.ectrpg.view.dialog.obj.Case;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.util.*;
+
+public final class ProgressMaker {
+    private ProgressMaker() {
+    }
+
+    public static void main(String[] args) {
+        // walk a block use 32 gameticks
+
+        /*
+        int progressId = -1;
+        Map<Integer, Set<Item>> progressItems = new HashMap<>();
+        Set<Item> map000item = new HashSet<>();
+        map000item.add(new Door("TestDoor", new LocationPair<>(9,0), new Pair<>(1, new LocationPair<>(2F, 2.96875F)), Entity.TOWARD_UP));
+        Set<Item> map001item = new HashSet<>();
+        map001item.add(new Door("TestDoor", new LocationPair<>(2,4), new Pair<>(0, new LocationPair<>(9F, 1.03125F)), Entity.TOWARD_DOWN));
+        progressItems.put(0, map000item);
+        progressItems.put(1, map001item);
+        Map<Integer, Set<Entity>> progressEntities = new HashMap<>();
+        boolean withDefaultProgress = true;
+        */
+
+
+        int progressId = 1;
+        Map<Integer, Set<Entity>> progressEntities = new HashMap<>();
+        Set<Entity> map000entity = new HashSet<>();
+        map000entity.add(new Entity(new LocationPair<>(9.5F, 13.5F), Entity.TOWARD_UP, "TestEntity") {
+            int useRefresh = 10;
+            boolean activing = true;
+
+            @Override
+            public void onUnRegisiter() {
+                System.out.println("Entity was unregisitered.");
+            }
+
+            @Override
+            public void active() {
+                if (activing && this.isIntegerBlock()) {
+                    if (this.getWonderMoving() == Entity.GOTOWARD_UP) {
+                        this.setToward(Entity.TOWARD_DOWN);
+                        this.setWonderMoving(Entity.GOTOWARD_DOWN);
+                    } else {
+                        this.setToward(Entity.TOWARD_UP);
+                        this.setWonderMoving(Entity.GOTOWARD_UP);
+                    }
+                }
+                if (useRefresh > 0) {
+                    useRefresh--;
+                }
+            }
+
+            @Override
+            public void onUse() {
+                if (useRefresh == 0) {
+                    Keyboard.setState(Keyboard.STATE_DIALOG);
+                    activing = false;
+                    int moving = this.getMoving();
+                    int wonderMoving = this.getWonderMoving();
+                    int toward = this.getToward();
+                    this.setMoving(Entity.NOTGO);
+                    this.setWonderMoving(Entity.NOTGO);
+                    this.facePlayer();
+                    System.out.println("Changed the state of Keyboard.");
+                    Case progress = new Case(Localization.query("test.entity.prs"), 2, () -> {
+                        Keyboard.setState(Keyboard.STATE_MOVING);
+                        activing = true;
+                        this.setMoving(moving);
+                        this.setWonderMoving(wonderMoving);
+                        this.setToward(toward);
+                        EventManager.getInstance().performedNp(this, 0);
+                        System.out.println("Progress ID is now 0.");
+                        System.out.println("Changed the state of Keyboard.");
+                        useRefresh = 40;
+                    });
+                    Case hello = new Case(Localization.query("test.entity.faq"), 3, () -> {
+                        ArrayList<String> str = new ArrayList<>();
+                        str.add(Localization.query("test.entity.hello1"));
+                        str.add(Localization.query("test.entity.hello2"));
+                        GameFrame.getInstance().regisiterDialog(new SimpleTalkingDialog(str, () -> {
+                            Keyboard.setState(Keyboard.STATE_MOVING);
+                            activing = true;
+                            this.setMoving(moving);
+                            this.setWonderMoving(wonderMoving);
+                            this.setToward(toward);
+                            useRefresh = 40;
+                        }));
+                        System.out.println("Changed the state of Keyboard.");
+                    });
+                    Case back = new Case(Localization.query("test.entity.buff"), 4, () -> {
+                        Keyboard.setState(Keyboard.STATE_MOVING);
+                        activing = true;
+                        this.setMoving(moving);
+                        this.setWonderMoving(wonderMoving);
+                        this.setToward(toward);
+                        Resource.getPlayer().addBuff(new SpeedBuff(1200, 1.5F));
+                        System.out.println("Changed the state of Keyboard.");
+                        useRefresh = 40;
+                    });
+                    progress.init(hello, null, hello);
+                    hello.init(back, progress, back);
+                    back.init(null, hello, null);
+                    List<Case> cases = new ArrayList<>();
+                    cases.add(progress);
+                    cases.add(hello);
+                    cases.add(back);
+                    ArrayList<String> strs = new ArrayList<>();
+                    strs.add(Localization.query("test.entity.title"));
+                    GameFrame.getInstance().regisiterDialog(new TalkingDialog(strs, cases));
+                }
+                useRefresh = 10;
+            }
+        });
+        progressEntities.put(0, map000entity);
+        Map<Integer, Set<Item>> progressItems = new HashMap<>();
+        boolean withDefaultProgress = true;
+
+
+        /*
+        int progressId = 100;
+        Map<Integer, Set<Entity>> progressEntities = new HashMap<>();
+        Map<Integer, Set<Item>> progressItems = new HashMap<>();
+        boolean withDefaultProgress = true;
+        */
+
+
+
+        try {
+            ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(new File("resources/object/progress", "progress" + String.format("%03d", progressId) + ".prs")));
+            oos.writeObject(new Progress(progressId, progressEntities, progressItems, withDefaultProgress));
+            oos.close();
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        }
+    }
+}
