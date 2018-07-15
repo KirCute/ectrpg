@@ -13,7 +13,7 @@ public abstract class FriendlyNPC extends Entity {
     }
 
     @Override
-    public void active() {
+    public void action() {
         //TODO Friendly NPC Active
     }
 

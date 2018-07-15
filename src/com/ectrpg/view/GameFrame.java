@@ -133,7 +133,8 @@ public final class GameFrame extends Game {
                     System.out.print("        Player UsingView: " + Integer.toString(Resource.getPlayer().getUsingView()));
                     System.out.print("        Map View Location: " + Double.toString(Resource.getMapImage().getX()) + ", " + Double.toString(Resource.getMapImage().getY()));
                     System.out.print("        Map Id: " + Resource.getMapId());
-                    System.out.println("        Speed: " + Resource.getPlayer().getSpeed());
+                    System.out.print("        Speed: " + Resource.getPlayer().getSpeed());
+                    System.out.println("        Last: " + Resource.getPlayer().isLastMovingSucceed());
                     Keyboard.show();
                 } catch (NullPointerException npe) {
                     System.out.println("No data.");

@@ -37,7 +37,7 @@ public final class LambdaFactory {
         @NotNull SideEffect finalOnUnRegisiter = onUnRegisiter;
         return new Entity(location, toward, name) {
             @Override
-            public void active() {
+            public void action() {
                 active.invoke();
             }
 
@@ -108,7 +108,7 @@ public final class LambdaFactory {
         @NotNull SideEffect finalOnUnRegisiter = onUnRegisiter;
         return new HeartEntity(location, toward, name, heart, lives, buffs) {
             @Override
-            public void active() {
+            public void action() {
                 active.invoke();
             }
 

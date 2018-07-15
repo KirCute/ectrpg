@@ -77,7 +77,7 @@ public abstract class Boss extends HeartEntity {
     }
 
     @Override
-    public void active() {
+    public void action() {
         now.accept(this);
     }
 

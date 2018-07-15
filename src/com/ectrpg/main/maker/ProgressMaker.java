@@ -41,12 +41,14 @@ public final class ProgressMaker {
         */
 
 
+
         int progressId = 1;
         Map<Integer, Set<Entity>> progressEntities = new HashMap<>();
         Set<Entity> map000entity = new HashSet<>();
-        map000entity.add(new Entity(new LocationPair<>(9.5F, 13.5F), Entity.TOWARD_UP, "TestEntity") {
+        map000entity.add(new Entity(new LocationPair<>(9.5F, 12.5F), Entity.TOWARD_RIGHT, "TestEntity") {
             int useRefresh = 10;
-            boolean activing = true;
+            int activeTime = 40;
+            boolean acting = true;
 
             @Override
             public void onUnRegisiter() {
@@ -54,14 +56,19 @@ public final class ProgressMaker {
             }
 
             @Override
-            public void active() {
-                if (activing && this.isIntegerBlock()) {
-                    if (this.getWonderMoving() == Entity.GOTOWARD_UP) {
-                        this.setToward(Entity.TOWARD_DOWN);
-                        this.setWonderMoving(Entity.GOTOWARD_DOWN);
+            public void action() {
+                if (acting) {
+                    if (activeTime >= 0) {
+                        this.setToward(Entity.TOWARD_RIGHT);
+                        this.setWonderMoving(Entity.GOTOWARD_RIGHT);
                     } else {
-                        this.setToward(Entity.TOWARD_UP);
-                        this.setWonderMoving(Entity.GOTOWARD_UP);
+                        this.setToward(Entity.TOWARD_LEFT);
+                        this.setWonderMoving(Entity.GOTOWARD_LEFT);
+                    }
+                }
+                if (isLastMovingSucceed()) {
+                    if (++activeTime >= 80) {
+                        activeTime = -80;
                     }
                 }
                 if (useRefresh > 0) {
@@ -73,7 +80,7 @@ public final class ProgressMaker {
             public void onUse() {
                 if (useRefresh == 0) {
                     Keyboard.setState(Keyboard.STATE_DIALOG);
-                    activing = false;
+                    acting = false;
                     int moving = this.getMoving();
                     int wonderMoving = this.getWonderMoving();
                     int toward = this.getToward();
@@ -83,7 +90,7 @@ public final class ProgressMaker {
                     System.out.println("Changed the state of Keyboard.");
                     Case progress = new Case(Localization.query("test.entity.prs"), 2, () -> {
                         Keyboard.setState(Keyboard.STATE_MOVING);
-                        activing = true;
+                        acting = true;
                         this.setMoving(moving);
                         this.setWonderMoving(wonderMoving);
                         this.setToward(toward);
@@ -98,7 +105,7 @@ public final class ProgressMaker {
                         str.add(Localization.query("test.entity.hello2"));
                         GameFrame.getInstance().regisiterDialog(new SimpleTalkingDialog(str, () -> {
                             Keyboard.setState(Keyboard.STATE_MOVING);
-                            activing = true;
+                            acting = true;
                             this.setMoving(moving);
                             this.setWonderMoving(wonderMoving);
                             this.setToward(toward);
@@ -108,7 +115,7 @@ public final class ProgressMaker {
                     });
                     Case back = new Case(Localization.query("test.entity.buff"), 4, () -> {
                         Keyboard.setState(Keyboard.STATE_MOVING);
-                        activing = true;
+                        acting = true;
                         this.setMoving(moving);
                         this.setWonderMoving(wonderMoving);
                         this.setToward(toward);
@@ -135,12 +142,14 @@ public final class ProgressMaker {
         boolean withDefaultProgress = true;
 
 
+
         /*
         int progressId = 100;
         Map<Integer, Set<Entity>> progressEntities = new HashMap<>();
         Map<Integer, Set<Item>> progressItems = new HashMap<>();
         boolean withDefaultProgress = true;
         */
+
 
 
 

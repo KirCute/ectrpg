@@ -38,7 +38,7 @@ public final class Player extends HeartEntity implements Serializable {
     }
 
     @Override
-    public void active() {
+    public void action() {
         Keyboard.setChange(false);
         this.setMovingWay((Keyboard.isKeyPressed(Keyboard.KEY_FAST, Keyboard.STATE_MOVING) ? Entity.MOVING_FASTER : Entity.MOVING_NORMAL));
         if ((this.getToward() == Entity.TOWARD_UP) || (this.getToward() == Entity.TOWARD_DOWN)) {

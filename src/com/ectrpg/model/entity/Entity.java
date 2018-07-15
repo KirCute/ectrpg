@@ -57,12 +57,13 @@ public abstract class Entity implements Serializable, Useable, Regisiterable {
     private int toward;
     private int moving = NOTGO;
     private int movingWay = MOVING_NORMAL;
-    private byte changeView[] = {0, 0};
+    private byte changeView = 0;
     private int usingView;
     private float speed = 1F;
     private float movingBuffer;
     private String name;
     private int wonderMoving;
+    private boolean lastMovingSucceed;
     private boolean normalMoving = true;
 
     public int getToward() {
@@ -144,69 +145,28 @@ public abstract class Entity implements Serializable, Useable, Regisiterable {
     }
 
     public void changeViewFromMoving() {
+        // TODO: 2018/7/15 0015 Two types of left or right (with different hands toward) 
         if (moving == NOTGO) {
-            changeView[0] = 0;
-            changeView[1] = 0;
+            changeView = -1;
             usingView = toward - 1;
-        } else if (moving == GOTOWARD_UP || ((moving == GOTOWARD_UPRIGHT || moving == GOTOWARD_UPLEFT) && toward == TOWARD_UP)) {
-            changeView[1] = 0;
-            if ((usingView == VIEW_GOUPRIGHT) && changeView[0] <= (16 / (movingWay + 1))) {
-                usingView = VIEW_GOUPRIGHT;
-                changeView[0]++;
-            } else if (((usingView == VIEW_GOUPRIGHT) && changeView[0] > (16 / (movingWay + 1))) || (usingView != VIEW_GOUPLEFT && usingView != VIEW_GOUPRIGHT)) {
-                usingView = VIEW_GOUPLEFT;
-                changeView[0] = 1;
-            } else if ((usingView == VIEW_GOUPLEFT) && changeView[0] <= (16 / (movingWay + 1))) {
-                usingView = VIEW_GOUPLEFT;
-                changeView[0]++;
-            } else if ((usingView == VIEW_GOUPLEFT) && changeView[0] > (16 / (movingWay + 1))) {
-                usingView = VIEW_GOUPRIGHT;
-                changeView[0] = 1;
+        } else {
+            if (++changeView >= 15) {
+                changeView = -16;
             }
-        } else if (moving == GOTOWARD_DOWN || ((moving == GOTOWARD_DOWNLEFT || moving == GOTOWARD_DOWNRIGHT) && toward == TOWARD_DOWN)) {
-            changeView[1] = 0;
-            if ((usingView == VIEW_GODOWNRIGHT) && changeView[0] <= (16 / (movingWay + 1))) {
-                usingView = VIEW_GODOWNRIGHT;
-                changeView[0]++;
-            } else if ((usingView == VIEW_GODOWNRIGHT) && changeView[0] > (16 / (movingWay + 1))) {
-                usingView = VIEW_GODOWNLEFT;
-                changeView[0] = 1;
-            } else if ((usingView == VIEW_GODOWNLEFT) && changeView[0] <= (16 / (movingWay + 1))) {
-                usingView = VIEW_GODOWNLEFT;
-                changeView[0]++;
-            } else if ((usingView == VIEW_GODOWNLEFT) && changeView[0] > (16 / (movingWay + 1)) || (usingView != VIEW_GOUPLEFT && usingView != VIEW_GOUPRIGHT)) {
-                usingView = VIEW_GODOWNRIGHT;
-                changeView[0] = 1;
-            }
-        } else if (moving == GOTOWARD_LEFT || ((moving == GOTOWARD_UPLEFT || moving == GOTOWARD_DOWNLEFT) && toward == TOWARD_LEFT)) {
-            changeView[0] = 0;
-            if ((usingView == VIEW_GOLEFT) && changeView[1] < (12 / (movingWay + 1))) {
-                usingView = VIEW_GOLEFT;
-                changeView[1]++;
-            } else if ((usingView == VIEW_GOLEFT) && changeView[1] >= (12 / (movingWay + 1))) {
-                usingView = VIEW_LEFT;
-                changeView[1] = (byte) (-4 / (movingWay + 1));
-            } else if ((usingView == VIEW_LEFT) && changeView[1] < 0) {
-                usingView = VIEW_LEFT;
-                changeView[1]++;
-            } else if (changeView[1] == 0) {
-                usingView = VIEW_GOLEFT;
-                changeView[1]++;
-            }
-        } else if (moving == GOTOWARD_RIGHT || ((moving == GOTOWARD_UPRIGHT || moving == GOTOWARD_DOWNRIGHT) && toward == TOWARD_RIGHT)) {
-            changeView[0] = 0;
-            if ((usingView == VIEW_GORIGHT) && changeView[1] < (12 / (movingWay + 1))) {
-                usingView = VIEW_GORIGHT;
-                changeView[1]++;
-            } else if ((usingView == VIEW_GORIGHT) && changeView[1] >= (12 / (movingWay + 1))) {
-                usingView = VIEW_RIGHT;
-                changeView[1] = (byte) (-4 / (movingWay + 1));
-            } else if ((usingView == VIEW_RIGHT) && changeView[1] < 0) {
-                usingView = VIEW_RIGHT;
-                changeView[1]++;
-            } else if (changeView[1] == 0) {
-                usingView = VIEW_GORIGHT;
-                changeView[1]++;
+            if (changeView >= 0) {
+                switch (toward) {
+                    case TOWARD_UP: usingView = VIEW_GOUPLEFT; break;
+                    case TOWARD_DOWN: usingView = VIEW_GODOWNRIGHT; break;
+                    case TOWARD_LEFT: usingView = VIEW_GOLEFT; break;
+                    case TOWARD_RIGHT: usingView = VIEW_GORIGHT; break;
+                }
+            } else {
+                switch (toward) {
+                    case TOWARD_UP: usingView = VIEW_GOUPRIGHT; break;
+                    case TOWARD_DOWN: usingView = VIEW_GODOWNLEFT; break;
+                    case TOWARD_LEFT: usingView = VIEW_LEFT; break;
+                    case TOWARD_RIGHT: usingView = VIEW_RIGHT; break;
+                }
             }
         }
     }
@@ -548,25 +508,31 @@ public abstract class Entity implements Serializable, Useable, Regisiterable {
     }
 
     public void onRefresh() {
-        this.active();
+        this.action();
         for (int i = (int)speed; i > 0; i--) {
             tryMove();
+            this.changeViewFromMoving();
         }
         movingBuffer += speed % 1;
         if (movingBuffer >= 1) {
             movingBuffer--;
             tryMove();
+            this.changeViewFromMoving();
         }
-        this.changeViewFromMoving();
+    }
+
+    public boolean isLastMovingSucceed() {
+        return lastMovingSucceed;
     }
 
     private void tryMove() {
-        if (this.canEntityMove()) {
+        lastMovingSucceed = this.canEntityMove();
+        if (lastMovingSucceed) {
             this.move();
         }
     }
 
-    public abstract void active();
+    public abstract void action();
 
     public abstract void onUse();
 
