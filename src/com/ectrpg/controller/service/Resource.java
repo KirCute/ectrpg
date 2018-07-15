@@ -27,6 +27,7 @@ import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 public final class Resource {
     public static final FObject COLORLESS = new ShapeObject(ColorResource.COLORLESS, new FRectangle(1, 1));
@@ -45,6 +46,7 @@ public final class Resource {
     private static final List<ArrayList<ImageResource>> itemsResources = new ArrayList<>();
     private static final List<Integer> itemsProgress = new ArrayList<>();
     private static final List<SideEffect> misc = new ArrayList<>();
+    private static final Random random = new Random();
     private static FObject mapBlockImage;
     private static FObject mapBackground;
     private static FObject uponImage;
@@ -67,6 +69,7 @@ public final class Resource {
                 regisiterReadyEntities(nextProgress);
             }
         });
+        random.setSeed(System.currentTimeMillis());
     }
 
     private Resource() {
@@ -100,6 +103,10 @@ public final class Resource {
         for (SideEffect m : misc) {
             m.invoke();
         }
+    }
+
+    public static Random getRandom() {
+        return random;
     }
 
     private static void progressReplacer() {

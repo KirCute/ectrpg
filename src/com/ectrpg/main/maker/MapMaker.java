@@ -13,6 +13,7 @@ public final class MapMaker {
     private MapMaker() {
     }
     public static void main(String[] args) {
+        ///*
         int mapId = 0;
         int width = 19;
         int brightness = -1;
@@ -36,12 +37,13 @@ public final class MapMaker {
         //ArrayList<Item> item = new ArrayList<>();
         //item.add(new Door("TestDoor", new LocationPair<>(9, 0) ,new Pair<>(1, new LocationPair<>(2.0F,3.0F)), Entity.TOWARD_UP));
         LocationPair<Integer> viewShifting = new LocationPair<>(0,0);
+        //*/
         /*
         int mapId = 1;
         int width = 5;
         int brightness = -1;
         boolean[] mapBlock = {
-                true ,true ,true ,true ,true ,
+                true ,true ,false,true ,true ,
                 true ,false,false,false,true ,
                 true ,false,false,false,true ,
                 true ,false,false,false,true ,
@@ -49,6 +51,29 @@ public final class MapMaker {
         };
         //ArrayList<Item> item = new ArrayList<>();
         //item.add(new Door("TestDoor", new LocationPair<>(2, 4), new Pair<>(0, new LocationPair<>(9.0F,1.0F)), Entity.TOWARD_DOWN));
+        LocationPair<Integer> viewShifting = new LocationPair<>(0,0);
+        */
+        /*
+        int mapId = 2;
+        int width = 19;
+        int brightness = -1;
+        boolean[] mapBlock = {
+                true ,true ,true ,true ,true ,true ,true ,true ,true ,true ,true ,true ,true ,true ,true ,true ,true ,true ,true ,
+                true ,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true ,
+                true ,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true ,
+                true ,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true ,
+                true ,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true ,
+                true ,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true ,
+                true ,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true ,
+                true ,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true ,
+                true ,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true ,
+                true ,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true ,
+                true ,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true ,
+                true ,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true ,
+                true ,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true ,
+                true ,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,true ,
+                true ,true ,true ,true ,true ,true ,true ,true ,true ,false,true ,true ,true ,true ,true ,true ,true ,true ,true ,
+        };
         LocationPair<Integer> viewShifting = new LocationPair<>(0,0);
         */
 

@@ -150,8 +150,8 @@ public abstract class Entity implements Serializable, Useable, Regisiterable {
             changeView = -1;
             usingView = toward - 1;
         } else {
-            if (++changeView >= 15) {
-                changeView = -16;
+            if (++changeView >= 31) {
+                changeView = -32;
             }
             if (changeView >= 0) {
                 switch (toward) {
@@ -171,35 +171,80 @@ public abstract class Entity implements Serializable, Useable, Regisiterable {
         }
     }
 
+    public void changeTowardFromMoving() {
+        switch (wonderMoving) {
+            case GOTOWARD_UP: this.setToward(TOWARD_UP); break;
+            case GOTOWARD_DOWN: this.setToward(TOWARD_DOWN); break;
+            case GOTOWARD_LEFT: this.setToward(TOWARD_LEFT); break;
+            case GOTOWARD_RIGHT: this.setToward(TOWARD_RIGHT); break;
+            case GOTOWARD_UPLEFT:
+                if (this.getMoving() == GOTOWARD_UP) {
+                    this.setToward(TOWARD_UP);
+                } else if (this.getMoving() == GOTOWARD_LEFT) {
+                    this.setToward(TOWARD_LEFT);
+                } else if (this.getToward() != TOWARD_UP && this.getToward() != TOWARD_LEFT) {
+                    this.setToward(Resource.getRandom().nextInt(10) > 4 ? TOWARD_UP : TOWARD_LEFT);
+                }
+                break;
+            case GOTOWARD_UPRIGHT:
+                if (this.getMoving() == GOTOWARD_UP) {
+                    this.setToward(TOWARD_UP);
+                } else if (this.getMoving() == GOTOWARD_RIGHT) {
+                    this.setToward(TOWARD_RIGHT);
+                } else if (this.getToward() != TOWARD_UP && this.getToward() != TOWARD_RIGHT) {
+                    this.setToward(Resource.getRandom().nextInt(10) > 4 ? TOWARD_UP : TOWARD_RIGHT);
+                }
+                break;
+            case GOTOWARD_DOWNLEFT:
+                if (this.getMoving() == GOTOWARD_DOWN) {
+                    this.setToward(TOWARD_DOWN);
+                } else if (this.getMoving() == GOTOWARD_LEFT) {
+                    this.setToward(TOWARD_LEFT);
+                } else if (this.getToward() != TOWARD_DOWN && this.getToward() != TOWARD_LEFT) {
+                    this.setToward(Resource.getRandom().nextInt(10) > 4 ? TOWARD_DOWN : TOWARD_LEFT);
+                }
+                break;
+            case GOTOWARD_DOWNRIGHT:
+                if (this.getMoving() == GOTOWARD_DOWN) {
+                    this.setToward(TOWARD_DOWN);
+                } else if (this.getMoving() == GOTOWARD_RIGHT) {
+                    this.setToward(TOWARD_RIGHT);
+                } else if (this.getToward() != TOWARD_DOWN && this.getToward() != TOWARD_RIGHT) {
+                    this.setToward(Resource.getRandom().nextInt(10) > 4 ? TOWARD_DOWN : TOWARD_RIGHT);
+                }
+                break;
+        }
+    }
+
     public void move() {
         switch (moving) {
             case GOTOWARD_UP:
-                location.setY(location.getY() - 0.0625F);
+                location.setY(location.getY() - 0.03125F);
                 break;
             case GOTOWARD_DOWN:
-                location.setY(location.getY() + 0.0625F);
+                location.setY(location.getY() + 0.03125F);
                 break;
             case GOTOWARD_LEFT:
-                location.setX(location.getX() - 0.0625F);
+                location.setX(location.getX() - 0.03125F);
                 break;
             case GOTOWARD_RIGHT:
-                location.setX(location.getX() + 0.0625F);
+                location.setX(location.getX() + 0.03125F);
                 break;
             case GOTOWARD_UPLEFT:
-                location.setX(location.getX() - 0.0625F);
-                location.setY(location.getY() - 0.0625F);
+                location.setX(location.getX() - 0.03125F);
+                location.setY(location.getY() - 0.03125F);
                 break;
             case GOTOWARD_UPRIGHT:
-                location.setX(location.getX() + 0.0625F);
-                location.setY(location.getY() - 0.0625F);
+                location.setX(location.getX() + 0.03125F);
+                location.setY(location.getY() - 0.03125F);
                 break;
             case GOTOWARD_DOWNLEFT:
-                location.setX(location.getX() - 0.0625F);
-                location.setY(location.getY() + 0.0625F);
+                location.setX(location.getX() - 0.03125F);
+                location.setY(location.getY() + 0.03125F);
                 break;
             case GOTOWARD_DOWNRIGHT:
-                location.setX(location.getX() + 0.0625F);
-                location.setY(location.getY() + 0.0625F);
+                location.setX(location.getX() + 0.03125F);
+                location.setY(location.getY() + 0.03125F);
                 break;
         }
     }
@@ -403,6 +448,7 @@ public abstract class Entity implements Serializable, Useable, Regisiterable {
     }
 
     private LocationPair<Integer> getSideBlockForEntity(int side, int nextside) {
+        //TODO
         switch (side) {
             case SIDE_UP:
                 return new LocationPair<>((int) (location.getX() + nextside * 0.9375F), (int) (location.getY() - 1F));
@@ -509,6 +555,17 @@ public abstract class Entity implements Serializable, Useable, Regisiterable {
 
     public void onRefresh() {
         this.action();
+        refreshMove();
+        if (this.isPlayer()) {
+            refreshMove();
+        }
+    }
+
+    public boolean isLastMovingSucceed() {
+        return lastMovingSucceed;
+    }
+
+    private void refreshMove() {
         for (int i = (int)speed; i > 0; i--) {
             tryMove();
             this.changeViewFromMoving();
@@ -519,10 +576,6 @@ public abstract class Entity implements Serializable, Useable, Regisiterable {
             tryMove();
             this.changeViewFromMoving();
         }
-    }
-
-    public boolean isLastMovingSucceed() {
-        return lastMovingSucceed;
     }
 
     private void tryMove() {

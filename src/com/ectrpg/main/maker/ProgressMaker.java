@@ -6,6 +6,7 @@ import com.ectrpg.db.Localization;
 import com.ectrpg.event.EventManager;
 import com.ectrpg.model.LocationPair;
 import com.ectrpg.model.entity.Entity;
+import com.ectrpg.model.entity.FriendlyNPC;
 import com.ectrpg.model.fight.buff.SpeedBuff;
 import com.ectrpg.model.map.item.Item;
 import com.ectrpg.model.mission.Progress;
@@ -27,28 +28,38 @@ public final class ProgressMaker {
     public static void main(String[] args) {
         // walk a block use 32 gameticks
 
+
         /*
         int progressId = -1;
         Map<Integer, Set<Item>> progressItems = new HashMap<>();
         Set<Item> map000item = new HashSet<>();
-        map000item.add(new Door("TestDoor", new LocationPair<>(9,0), new Pair<>(1, new LocationPair<>(2F, 2.96875F)), Entity.TOWARD_UP));
+        map000item.add(new Door("TestDoor", new LocationPair<>(9,0), new Pair<>(1, new LocationPair<>(2F, 2.9375F)), Entity.TOWARD_UP));
         Set<Item> map001item = new HashSet<>();
-        map001item.add(new Door("TestDoor", new LocationPair<>(2,4), new Pair<>(0, new LocationPair<>(9F, 1.03125F)), Entity.TOWARD_DOWN));
+        map001item.add(new Door("TestDoor", new LocationPair<>(2,4), new Pair<>(0, new LocationPair<>(9F, 1.0625F)), Entity.TOWARD_DOWN));
+        map001item.add(new Door("TestDoor", new LocationPair<>(2,0), new Pair<>(2, new LocationPair<>(9F, 12.9375F)), Entity.TOWARD_UP));
+        Set<Item> map002item = new HashSet<>();
+        map002item.add(new Door("TestDoor", new LocationPair<>(9,14), new Pair<>(1, new LocationPair<>(2F, 1.0625F)), Entity.TOWARD_DOWN));
         progressItems.put(0, map000item);
         progressItems.put(1, map001item);
+        progressItems.put(2, map002item);
         Map<Integer, Set<Entity>> progressEntities = new HashMap<>();
         boolean withDefaultProgress = true;
         */
 
 
-
+        ///*
         int progressId = 1;
         Map<Integer, Set<Entity>> progressEntities = new HashMap<>();
         Set<Entity> map000entity = new HashSet<>();
-        map000entity.add(new Entity(new LocationPair<>(9.5F, 12.5F), Entity.TOWARD_RIGHT, "TestEntity") {
+        map000entity.add(new Entity(new LocationPair<>(9.5F, 12.5F), Entity.TOWARD_RIGHT, "Cirno") {
             int useRefresh = 10;
-            int activeTime = 40;
+            int activeTime = 80;
             boolean acting = true;
+
+            @Override
+            public void onRegisiter() {
+                this.setMovingWay(MOVING_FASTER);
+            }
 
             @Override
             public void onUnRegisiter() {
@@ -67,8 +78,8 @@ public final class ProgressMaker {
                     }
                 }
                 if (isLastMovingSucceed()) {
-                    if (++activeTime >= 80) {
-                        activeTime = -80;
+                    if (++activeTime >= 160) {
+                        activeTime = -160;
                     }
                 }
                 if (useRefresh > 0) {
@@ -119,7 +130,7 @@ public final class ProgressMaker {
                         this.setMoving(moving);
                         this.setWonderMoving(wonderMoving);
                         this.setToward(toward);
-                        Resource.getPlayer().addBuff(new SpeedBuff(1200, 1.5F));
+                        Resource.getPlayer().addBuff(new SpeedBuff(600, 1.5F));
                         System.out.println("Changed the state of Keyboard.");
                         useRefresh = 40;
                     });
@@ -137,9 +148,13 @@ public final class ProgressMaker {
                 useRefresh = 10;
             }
         });
+        Set<Entity> map002entity = new HashSet<>();
+        map002entity.add(new FriendlyNPC(new LocationPair<>(9.5F, 7.5F), Entity.TOWARD_DOWN, "Sanae", 4));
         progressEntities.put(0, map000entity);
+        progressEntities.put(2, map002entity);
         Map<Integer, Set<Item>> progressItems = new HashMap<>();
         boolean withDefaultProgress = true;
+        //*/
 
 
 
