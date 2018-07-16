@@ -64,6 +64,7 @@ public abstract class Entity implements Serializable, Useable, Regisiterable {
     private String name;
     private int wonderMoving;
     private boolean lastMovingSucceed;
+    private boolean lastAutoTurn;
     private boolean normalMoving = true;
 
     public int getToward() {
@@ -182,7 +183,7 @@ public abstract class Entity implements Serializable, Useable, Regisiterable {
                     this.setToward(TOWARD_UP);
                 } else if (this.getMoving() == GOTOWARD_LEFT) {
                     this.setToward(TOWARD_LEFT);
-                } else if (this.getToward() != TOWARD_UP && this.getToward() != TOWARD_LEFT) {
+                } else {
                     this.setToward(Resource.getRandom().nextInt(10) > 4 ? TOWARD_UP : TOWARD_LEFT);
                 }
                 break;
@@ -191,7 +192,7 @@ public abstract class Entity implements Serializable, Useable, Regisiterable {
                     this.setToward(TOWARD_UP);
                 } else if (this.getMoving() == GOTOWARD_RIGHT) {
                     this.setToward(TOWARD_RIGHT);
-                } else if (this.getToward() != TOWARD_UP && this.getToward() != TOWARD_RIGHT) {
+                } else {
                     this.setToward(Resource.getRandom().nextInt(10) > 4 ? TOWARD_UP : TOWARD_RIGHT);
                 }
                 break;
@@ -200,7 +201,7 @@ public abstract class Entity implements Serializable, Useable, Regisiterable {
                     this.setToward(TOWARD_DOWN);
                 } else if (this.getMoving() == GOTOWARD_LEFT) {
                     this.setToward(TOWARD_LEFT);
-                } else if (this.getToward() != TOWARD_DOWN && this.getToward() != TOWARD_LEFT) {
+                } else {
                     this.setToward(Resource.getRandom().nextInt(10) > 4 ? TOWARD_DOWN : TOWARD_LEFT);
                 }
                 break;
@@ -209,10 +210,20 @@ public abstract class Entity implements Serializable, Useable, Regisiterable {
                     this.setToward(TOWARD_DOWN);
                 } else if (this.getMoving() == GOTOWARD_RIGHT) {
                     this.setToward(TOWARD_RIGHT);
-                } else if (this.getToward() != TOWARD_DOWN && this.getToward() != TOWARD_RIGHT) {
+                } else {
                     this.setToward(Resource.getRandom().nextInt(10) > 4 ? TOWARD_DOWN : TOWARD_RIGHT);
                 }
                 break;
+        }
+    }
+
+    public void changeSpeedFromMovingWay() {
+        if (movingWay == MOVING_FASTER && normalMoving) {
+            normalMoving = false;
+            speed = speed * 2;
+        } else if (movingWay == MOVING_NORMAL && !normalMoving) {
+            normalMoving = true;
+            speed = speed / 2;
         }
     }
 
@@ -250,25 +261,22 @@ public abstract class Entity implements Serializable, Useable, Regisiterable {
     }
 
     public boolean canEntityMove() {
-        if (movingWay == MOVING_FASTER && normalMoving) {
-            normalMoving = false;
-            speed = speed * 2;
-        } else if (movingWay == MOVING_NORMAL && !normalMoving) {
-            normalMoving = true;
-            speed = speed / 2;
-        }
         switch (wonderMoving) {
             case GOTOWARD_UP:
                 moving = wonderMoving;
+                lastAutoTurn = false;
                 return this.canEntityMoveTo(SIDE_UP);
             case GOTOWARD_DOWN:
                 moving = wonderMoving;
+                lastAutoTurn = false;
                 return this.canEntityMoveTo(SIDE_DOWN);
             case GOTOWARD_LEFT:
                 moving = wonderMoving;
+                lastAutoTurn = false;
                 return this.canEntityMoveTo(SIDE_LEFT);
             case GOTOWARD_RIGHT:
                 moving = wonderMoving;
+                lastAutoTurn = false;
                 return this.canEntityMoveTo(SIDE_RIGHT);
             case GOTOWARD_UPLEFT:
                 if (toward == TOWARD_UP) {
@@ -276,16 +284,20 @@ public abstract class Entity implements Serializable, Useable, Regisiterable {
                     boolean slave = this.canEntityMoveTo(SIDE_LEFT);
                     if (master) {
                         if (slave) {
-                            moving = GOTOWARD_UPLEFT;
+                            moving = wonderMoving;
+                            lastAutoTurn = false;
                             return true;
                         } else {
-                            this.moving = GOTOWARD_UP;
+                            moving = GOTOWARD_UP;
+                            lastAutoTurn = true;
                             return true;
                         }
                     } else if (slave) {
                         this.moving = GOTOWARD_LEFT;
+                        lastAutoTurn = true;
                         return true;
                     } else {
+                        lastAutoTurn = false;
                         return false;
                     }
                 } else {
@@ -294,15 +306,19 @@ public abstract class Entity implements Serializable, Useable, Regisiterable {
                     if (master) {
                         if (slave) {
                             moving = wonderMoving;
+                            lastAutoTurn = false;
                             return true;
                         } else {
                             this.moving = GOTOWARD_LEFT;
+                            lastAutoTurn = true;
                             return true;
                         }
                     } else if (slave) {
                         this.moving = GOTOWARD_UP;
+                        lastAutoTurn = true;
                         return true;
                     } else {
+                        lastAutoTurn = false;
                         return false;
                     }
                 }
@@ -313,15 +329,19 @@ public abstract class Entity implements Serializable, Useable, Regisiterable {
                     if (master) {
                         if (slave) {
                             moving = wonderMoving;
+                            lastAutoTurn = false;
                             return true;
                         } else {
                             this.moving = GOTOWARD_UP;
+                            lastAutoTurn = true;
                             return true;
                         }
                     } else if (slave) {
                         this.moving = GOTOWARD_RIGHT;
+                        lastAutoTurn = true;
                         return true;
                     } else {
+                        lastAutoTurn = false;
                         return false;
                     }
                 } else {
@@ -330,15 +350,19 @@ public abstract class Entity implements Serializable, Useable, Regisiterable {
                     if (master) {
                         if (slave) {
                             moving = wonderMoving;
+                            lastAutoTurn = false;
                             return true;
                         } else {
                             this.moving = GOTOWARD_RIGHT;
+                            lastAutoTurn = true;
                             return true;
                         }
                     } else if (slave) {
                         this.moving = GOTOWARD_UP;
+                        lastAutoTurn = true;
                         return true;
                     } else {
+                        lastAutoTurn = false;
                         return false;
                     }
                 }
@@ -349,15 +373,19 @@ public abstract class Entity implements Serializable, Useable, Regisiterable {
                     if (master) {
                         if (slave) {
                             moving = wonderMoving;
+                            lastAutoTurn = false;
                             return true;
                         } else {
                             this.moving = GOTOWARD_DOWN;
+                            lastAutoTurn = true;
                             return true;
                         }
                     } else if (slave) {
                         this.moving = GOTOWARD_LEFT;
+                        lastAutoTurn = true;
                         return true;
                     } else {
+                        lastAutoTurn = false;
                         return false;
                     }
                 } else {
@@ -366,15 +394,19 @@ public abstract class Entity implements Serializable, Useable, Regisiterable {
                     if (master) {
                         if (slave) {
                             moving = wonderMoving;
+                            lastAutoTurn = false;
                             return true;
                         } else {
                             this.moving = GOTOWARD_LEFT;
+                            lastAutoTurn = true;
                             return true;
                         }
                     } else if (slave) {
                         this.moving = GOTOWARD_DOWN;
+                        lastAutoTurn = true;
                         return true;
                     } else {
+                        lastAutoTurn = false;
                         return false;
                     }
                 }
@@ -385,15 +417,19 @@ public abstract class Entity implements Serializable, Useable, Regisiterable {
                     if (master) {
                         if (slave) {
                             moving = wonderMoving;
+                            lastAutoTurn = false;
                             return true;
                         } else {
                             this.moving = GOTOWARD_DOWN;
+                            lastAutoTurn = true;
                             return true;
                         }
                     } else if (slave) {
                         this.moving = GOTOWARD_RIGHT;
+                        lastAutoTurn = true;
                         return true;
                     } else {
+                        lastAutoTurn = false;
                         return false;
                     }
                 } else {
@@ -402,20 +438,25 @@ public abstract class Entity implements Serializable, Useable, Regisiterable {
                     if (master) {
                         if (slave) {
                             moving = wonderMoving;
+                            lastAutoTurn = false;
                             return true;
                         } else {
                             this.moving = GOTOWARD_RIGHT;
+                            lastAutoTurn = true;
                             return true;
                         }
                     } else if (slave) {
                         this.moving = GOTOWARD_DOWN;
+                        lastAutoTurn = true;
                         return true;
                     } else {
+                        lastAutoTurn = false;
                         return false;
                     }
                 }
             default:
                 this.moving = wonderMoving;
+                lastAutoTurn = false;
                 return false;
         }
     }
@@ -432,7 +473,11 @@ public abstract class Entity implements Serializable, Useable, Regisiterable {
         }
     }
 
-    private LocationPair<Integer> getSideBlock(int side, int nextside) {
+    protected void setLastAutoTurn(boolean lastAutoTurn) {
+        this.lastAutoTurn = lastAutoTurn;
+    }
+
+    protected LocationPair<Integer> getSideBlock(int side, int nextside) {
         switch (side) {
             case SIDE_UP:
                 return new LocationPair<>((int) (location.getX() + nextside * 0.4375F), (int) (location.getY() - 0.5F));
@@ -463,7 +508,7 @@ public abstract class Entity implements Serializable, Useable, Regisiterable {
         }
     }
 
-    private boolean canEntityMoveTo(int side) {
+    protected boolean canEntityMoveTo(int side) {
         if ((location.getY() <= 0.5 && side == SIDE_UP) ||
                 (location.getY() >= Resource.getMap().getMapHeight() - 0.5 && side == SIDE_DOWN) ||
                 (location.getX() <= 0.5 && side == SIDE_LEFT) ||
@@ -556,13 +601,17 @@ public abstract class Entity implements Serializable, Useable, Regisiterable {
     public void onRefresh() {
         this.action();
         refreshMove();
-        if (this.isPlayer()) {
+        if (this instanceof HeartEntity) {
             refreshMove();
         }
     }
 
     public boolean isLastMovingSucceed() {
         return lastMovingSucceed;
+    }
+
+    public boolean isLastAutoTurn() {
+        return lastAutoTurn;
     }
 
     private void refreshMove() {
@@ -579,6 +628,7 @@ public abstract class Entity implements Serializable, Useable, Regisiterable {
     }
 
     private void tryMove() {
+        this.changeSpeedFromMovingWay();
         lastMovingSucceed = this.canEntityMove();
         if (lastMovingSucceed) {
             this.move();

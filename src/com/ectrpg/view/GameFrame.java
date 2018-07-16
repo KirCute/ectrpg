@@ -127,14 +127,15 @@ public final class GameFrame extends Game {
             if (this.debug.ended()) {
                 try {
                     System.out.print(Resource.getTime());
-                    System.out.print("        Player Location: " + Float.toString(Resource.getPlayer().getLocation().getX()) + ", " + Float.toString(Resource.getPlayer().getLocation().getY()));
-                    System.out.print("        Player Toward: " + Integer.toString(Resource.getPlayer().getToward()));
-                    System.out.print("        Player Moving: " + Integer.toString(Resource.getPlayer().getMoving()));
-                    System.out.print("        Player UsingView: " + Integer.toString(Resource.getPlayer().getUsingView()));
-                    System.out.print("        Map View Location: " + Double.toString(Resource.getMapImage().getX()) + ", " + Double.toString(Resource.getMapImage().getY()));
-                    System.out.print("        Map Id: " + Resource.getMapId());
-                    System.out.print("        Speed: " + Resource.getPlayer().getSpeed());
-                    System.out.println("        Last: " + Resource.getPlayer().isLastMovingSucceed());
+                    System.out.print("      Player Location: " + Float.toString(Resource.getPlayer().getLocation().getX()) + ", " + Float.toString(Resource.getPlayer().getLocation().getY()));
+                    System.out.print("      Player Toward: " + Integer.toString(Resource.getPlayer().getToward()));
+                    System.out.print("      Player Moving: " + Integer.toString(Resource.getPlayer().getMoving()));
+                    System.out.print("      Player UsingView: " + Integer.toString(Resource.getPlayer().getUsingView()));
+                    System.out.print("      Map View Location: " + Double.toString(Resource.getMapImage().getX()) + ", " + Double.toString(Resource.getMapImage().getY()));
+                    System.out.print("      Map Id: " + Resource.getMapId());
+                    System.out.print("      Speed: " + Resource.getPlayer().getSpeed());
+                    System.out.print("      Last: " + Resource.getPlayer().isLastMovingSucceed());
+                    System.out.println("      Turn: " + Resource.getPlayer().isLastAutoTurn());
                     Keyboard.show();
                 } catch (NullPointerException npe) {
                     System.out.println("No data.");
