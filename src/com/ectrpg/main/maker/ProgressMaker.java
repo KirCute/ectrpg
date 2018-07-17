@@ -149,7 +149,9 @@ public final class ProgressMaker {
             }
         });
         Set<Entity> map002entity = new HashSet<>();
-        map002entity.add(new FriendlyNPC(new LocationPair<>(9.5F, 7.5F), Entity.TOWARD_DOWN, "Sanae", 3));
+        List<String> greet = new ArrayList<>();
+        greet.add("Hello");
+        map002entity.add(new FriendlyNPC(new LocationPair<>(9.5F, 7.5F), Entity.TOWARD_DOWN, "Sanae", 3, 30, 12, 2 , -12, greet));
         progressEntities.put(0, map000entity);
         progressEntities.put(2, map002entity);
         Map<Integer, Set<Item>> progressItems = new HashMap<>();

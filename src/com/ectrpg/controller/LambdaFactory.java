@@ -59,7 +59,8 @@ public final class LambdaFactory {
     }
 
     public static Entity npcFactory(@NotNull LocationPair<Float> location, int toward, @NotNull String name, int liveArea,
-                                    @NotNull SideEffect onUse, @Nullable SideEffect onRegisiter, @Nullable SideEffect onUnRegisiter) {
+                                    @NotNull SideEffect onUse, @Nullable SideEffect onRegisiter, @Nullable SideEffect onUnRegisiter,
+                                    int width, int height, int shift_x, int shift_y, @NotNull List<String> s) {
         if (onRegisiter == null) {
             onRegisiter = empty;
         }
@@ -69,7 +70,7 @@ public final class LambdaFactory {
 
         @NotNull SideEffect finalOnRegisiter = onRegisiter;
         @NotNull SideEffect finalOnUnRegisiter = onUnRegisiter;
-        return new FriendlyNPC(location, toward, name, liveArea) {
+        return new FriendlyNPC(location, toward, name, liveArea, width, height, shift_x, shift_y, s) {
             @Override
             public void onUse() {
                 onUse.invoke();

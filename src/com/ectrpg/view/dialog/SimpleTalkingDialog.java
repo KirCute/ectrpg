@@ -26,13 +26,14 @@ public class SimpleTalkingDialog implements IDialog, Serializable, IManager {
     private transient int direction = 1;
     private transient AttachedObjects bottom;
     private transient AttachedAbstractObjects dialog;
-    private final SideEffect nextActive;
+    private final SideEffect nextAction;
     private List<TimerText> tt;
     private List<FText> textObj;
     private ImageObject next;
 
-    public SimpleTalkingDialog(@NotNull List<String> s, @NotNull SideEffect nextActive) {
-        this.nextActive = nextActive;
+    public SimpleTalkingDialog(@NotNull List<String> s, @NotNull SideEffect nextAction) {
+        // FIXME: 2018/7/17 0017 Init in init(), not here.
+        this.nextAction = nextAction;
         this.tt = new ArrayList<>();
         this.textObj = new ArrayList<>();
         for (String str : s) {
@@ -114,7 +115,7 @@ public class SimpleTalkingDialog implements IDialog, Serializable, IManager {
             this.next.setRes(ResourcesManager.get(2).part(0, res * 17, 17, 17));
             timer = 5;
             if (Keyboard.isKeyPressed(Keyboard.KEY_USE, Keyboard.STATE_DIALOG)) {
-                nextActive.invoke();
+                nextAction.invoke();
                 GameFrame.getInstance().unRegisiterDialog(this);
             }
         }

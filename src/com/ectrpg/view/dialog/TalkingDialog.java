@@ -36,6 +36,7 @@ public class TalkingDialog implements IDialog, Serializable, IManager {
     private final List<Case> cases;
 
     public TalkingDialog(@Nullable List<String> s, @NotNull List<Case> cases) {
+        // FIXME: 2018/7/17 0017 Init in init(), not here.
         this.cases = cases;
         for (Case c : this.cases) {
             c.setGroup(this);

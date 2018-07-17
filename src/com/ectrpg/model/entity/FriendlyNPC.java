@@ -2,16 +2,25 @@ package com.ectrpg.model.entity;
 
 import com.ectrpg.controller.service.Resource;
 import com.ectrpg.model.LocationPair;
+import com.ectrpg.view.GameFrame;
+import com.ectrpg.view.dialog.NpcGreets;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public class FriendlyNPC extends Entity {
     private LocationPair<Integer> spawn;
     private int activeZone;
     private float keepTime = 0f;
+    private NpcGreets greet;
+    private int useRefresh = 0;
 
-    public FriendlyNPC(LocationPair<Float> location, int toward, String name, int activeZone) {
+    public FriendlyNPC(LocationPair<Float> location, int toward, String name, int activeZone, int width, int height,
+                       int shift_x, int shift_y, @NotNull List<String> s) {
         super(location, toward, name);
         this.spawn = location.toIntegerPair();
         this.activeZone = activeZone;
+        this.greet = new NpcGreets(this, width, height, shift_x, shift_y, s);
     }
 
     @Override
@@ -85,11 +94,21 @@ public class FriendlyNPC extends Entity {
         if (!isLastMovingSucceed() || isLastAutoTurn()) {
             this.setMoving(NOTGO);
         }
+        greet.onRefresh();
+        if (useRefresh > 0) {
+            if (--useRefresh == 0) {
+                GameFrame.getInstance().unRegisiterDialog(greet);
+            }
+        }
     }
 
     @Override
     public void onUse() {
-        // TODO: 2018/7/15 0015 Player greet 
+        if (useRefresh > 0) {
+            return;
+        }
+        useRefresh = 600;
+        GameFrame.getInstance().regisiterDialog(greet);
     }
     
     @Override
