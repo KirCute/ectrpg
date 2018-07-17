@@ -60,7 +60,7 @@ public final class LambdaFactory {
 
     public static Entity npcFactory(@NotNull LocationPair<Float> location, int toward, @NotNull String name, int liveArea,
                                     @NotNull SideEffect onUse, @Nullable SideEffect onRegisiter, @Nullable SideEffect onUnRegisiter,
-                                    int width, int height, int shift_x, int shift_y, @NotNull List<String> s) {
+                                    @NotNull List<String> s) {
         if (onRegisiter == null) {
             onRegisiter = empty;
         }
@@ -70,7 +70,7 @@ public final class LambdaFactory {
 
         @NotNull SideEffect finalOnRegisiter = onRegisiter;
         @NotNull SideEffect finalOnUnRegisiter = onUnRegisiter;
-        return new FriendlyNPC(location, toward, name, liveArea, width, height, shift_x, shift_y, s) {
+        return new FriendlyNPC(location, toward, name, liveArea, s) {
             @Override
             public void onUse() {
                 onUse.invoke();
@@ -201,8 +201,8 @@ public final class LambdaFactory {
         };
     }
 
-    public static Bullet bulletFactory(@Nullable HeartEntity owner, int resourceType, int resource, int damage, 
-                                       @NotNull LocationPair<Float> location, @Nullable SideEffect active, 
+    public static Bullet bulletFactory(@Nullable HeartEntity owner, int resourceType, int resource, int damage,
+                                       @NotNull LocationPair<Float> location, @Nullable SideEffect active,
                                        @Nullable SideEffect onRegisiter, @Nullable SideEffect onUnRegisiter) {
         if ((active == null) && (onRegisiter == null) && (onUnRegisiter == null)) {
             return new Bullet(owner, resourceType, resource, damage, location);

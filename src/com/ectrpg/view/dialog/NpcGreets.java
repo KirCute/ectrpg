@@ -20,8 +20,9 @@ import java.util.List;
 
 public class NpcGreets implements IDialog, IManager, Serializable {
     public static final int OBJECTS_X = 0;
-    public static final int LINE_HEIGHT = 10;
     public static final int TEXT_SIZE = 10;
+    public static final int DISTANCE_FROM_ENTITY = 3;
+    public static final int INSETS = 2;
     private transient AttachedObjects bottom;
     private transient AttachedAbstractObjects dialog;
     private transient ShapeObject table;
@@ -35,12 +36,8 @@ public class NpcGreets implements IDialog, IManager, Serializable {
     private FObject masterView;
     private FriendlyNPC master;
 
-    public NpcGreets(@NotNull FriendlyNPC master, int width, int height, int shift_x, int shift_y, @NotNull List<String> s) {
+    public NpcGreets(@NotNull FriendlyNPC master, @NotNull List<String> s) {
         this.master = master;
-        this.width = width;
-        this.height = height;
-        this.shift_x = shift_x;
-        this.shift_y = shift_y;
         this.s = s;
     }
 
@@ -100,13 +97,14 @@ public class NpcGreets implements IDialog, IManager, Serializable {
             this.table.setX(masterView.getX() + this.shift_x);
             this.table.setY(masterView.getY() + this.shift_y);
             for (int i = 0; i < textObj.size(); i++) {
-                textObj.get(i).setX(table.getX() + OBJECTS_X);
-                textObj.get(i).setY(table.getY() + LINE_HEIGHT * (i + 1));
+                textObj.get(i).setX(table.getX() + OBJECTS_X + INSETS / 2);
+                textObj.get(i).setY(table.getY() + TEXT_SIZE * (i + 1));
             }
             for (TimerText t : tt) {
                 t.onRefresh();
             }
-        } catch (NullPointerException ignored) { }
+        } catch (NullPointerException ignored) {
+        }
     }
 
     @Override
@@ -117,17 +115,29 @@ public class NpcGreets implements IDialog, IManager, Serializable {
 
     private void init() {
         if (this.masterView == null) {
-            this.masterView = Resource.getEntitiesImage().get(Resource.getId(master));this.tt = new ArrayList<>();
+            this.masterView = Resource.getEntitiesImage().get(Resource.getId(master));
+            this.tt = new ArrayList<>();
             this.textObj = new ArrayList<>();
             this.table = new ShapeObject(new ColorResource(0, 0, 0, 127), new FRectangle(width, height));
+            int maxLength = 0;
             for (String str : s) {
                 SimpleText st = new SimpleText(ColorResource.WHITE, "",
-                        table.getX() + OBJECTS_X, table.getY() + LINE_HEIGHT * (this.tt.size() + 1));
+                        this.getX() + OBJECTS_X + INSETS / 2, this.getY() + TEXT_SIZE * (this.tt.size() + 1));
                 st.setTextSize(TEXT_SIZE);
                 st.setFontName(Localization.getFont());
                 this.textObj.add(st);
-                this.tt.add(new TimerText(str, textObj.get(textObj.size() - 1)));
+                String line = Localization.query(str);
+                if (maxLength < line.length()) {
+                    maxLength = line.length();
+                }
+                this.tt.add(new TimerText(line, textObj.get(textObj.size() - 1)));
             }
+            this.width = maxLength * Localization.getWidth() * TEXT_SIZE / 2 + INSETS;
+            this.height = s.size() * TEXT_SIZE + INSETS;
+            this.shift_x = 16 - this.width / 2;
+            this.shift_y = -height - DISTANCE_FROM_ENTITY;
+            this.table.setWidth(width);
+            this.table.setHeight(height);
             for (int i = 0; i < this.tt.size() - 1; i++) {
                 this.tt.get(i).init(this.tt.get(i + 1));
                 this.tt.get(i).setGroup(this);

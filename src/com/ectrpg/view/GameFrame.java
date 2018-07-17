@@ -52,7 +52,6 @@ public final class GameFrame extends Game {
     @Override
     public void onInit() {
         super.onInit();
-        this.setLocationRelativeTo(null);
         this.setShowFPS(false);
         this.setAutoGC(false);
         this.setBackground(Color.BLACK);
@@ -60,6 +59,8 @@ public final class GameFrame extends Game {
         int leftrightSide = this.getInsets().left + this.getInsets().right;
         int topbuttomSide = this.getInsets().top + this.getInsets().bottom;
         this.setSize(608 + leftrightSide, 480 + topbuttomSide);
+        this.setLocationRelativeTo(null);
+        this.setMillisToRefresh(0);
         this.addKeyListener(
                 null,
                 e -> Keyboard.setPressed(e.getKeyCode(), true),
@@ -108,7 +109,7 @@ public final class GameFrame extends Game {
                 // TODO: 2018/7/12 0012 When game start
             }
         });
-        this.addObject(1 ,startButton);
+        this.addObject(1, startButton);
     }
 
     @Override
@@ -145,7 +146,8 @@ public final class GameFrame extends Game {
                 if (System.nanoTime() - startTime < fpsTime) {
                     Thread.sleep((fpsTime - (System.nanoTime() - startTime)) / 1000000L);
                 }
-            } catch (InterruptedException ignored) { }
+            } catch (InterruptedException ignored) {
+            }
         }
     }
 

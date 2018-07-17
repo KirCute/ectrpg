@@ -28,7 +28,7 @@ public class Save implements Serializable {
     }
 
     public void refreshTime() {
-        if (timeTick++ >= 120) {
+        if (timeTick++ >= 60) {
             timeTick = 0;
             ++timeSec;
         }

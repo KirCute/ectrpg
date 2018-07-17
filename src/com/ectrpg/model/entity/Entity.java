@@ -156,17 +156,33 @@ public abstract class Entity implements Serializable, Useable, Regisiterable {
             }
             if (changeView >= 0) {
                 switch (toward) {
-                    case TOWARD_UP: usingView = VIEW_GOUPLEFT; break;
-                    case TOWARD_DOWN: usingView = VIEW_GODOWNRIGHT; break;
-                    case TOWARD_LEFT: usingView = VIEW_GOLEFT; break;
-                    case TOWARD_RIGHT: usingView = VIEW_GORIGHT; break;
+                    case TOWARD_UP:
+                        usingView = VIEW_GOUPLEFT;
+                        break;
+                    case TOWARD_DOWN:
+                        usingView = VIEW_GODOWNRIGHT;
+                        break;
+                    case TOWARD_LEFT:
+                        usingView = VIEW_GOLEFT;
+                        break;
+                    case TOWARD_RIGHT:
+                        usingView = VIEW_GORIGHT;
+                        break;
                 }
             } else {
                 switch (toward) {
-                    case TOWARD_UP: usingView = VIEW_GOUPRIGHT; break;
-                    case TOWARD_DOWN: usingView = VIEW_GODOWNLEFT; break;
-                    case TOWARD_LEFT: usingView = VIEW_LEFT; break;
-                    case TOWARD_RIGHT: usingView = VIEW_RIGHT; break;
+                    case TOWARD_UP:
+                        usingView = VIEW_GOUPRIGHT;
+                        break;
+                    case TOWARD_DOWN:
+                        usingView = VIEW_GODOWNLEFT;
+                        break;
+                    case TOWARD_LEFT:
+                        usingView = VIEW_LEFT;
+                        break;
+                    case TOWARD_RIGHT:
+                        usingView = VIEW_RIGHT;
+                        break;
                 }
             }
         }
@@ -174,10 +190,18 @@ public abstract class Entity implements Serializable, Useable, Regisiterable {
 
     public void changeTowardFromMoving() {
         switch (wonderMoving) {
-            case GOTOWARD_UP: this.setToward(TOWARD_UP); break;
-            case GOTOWARD_DOWN: this.setToward(TOWARD_DOWN); break;
-            case GOTOWARD_LEFT: this.setToward(TOWARD_LEFT); break;
-            case GOTOWARD_RIGHT: this.setToward(TOWARD_RIGHT); break;
+            case GOTOWARD_UP:
+                this.setToward(TOWARD_UP);
+                break;
+            case GOTOWARD_DOWN:
+                this.setToward(TOWARD_DOWN);
+                break;
+            case GOTOWARD_LEFT:
+                this.setToward(TOWARD_LEFT);
+                break;
+            case GOTOWARD_RIGHT:
+                this.setToward(TOWARD_RIGHT);
+                break;
             case GOTOWARD_UPLEFT:
                 if (this.getMoving() == GOTOWARD_UP) {
                     this.setToward(TOWARD_UP);
@@ -615,7 +639,7 @@ public abstract class Entity implements Serializable, Useable, Regisiterable {
     }
 
     private void refreshMove() {
-        for (int i = (int)speed; i > 0; i--) {
+        for (int i = (int) speed; i > 0; i--) {
             tryMove();
             this.changeViewFromMoving();
         }

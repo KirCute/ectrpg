@@ -15,19 +15,18 @@ public class FriendlyNPC extends Entity {
     private NpcGreets greet;
     private int useRefresh = 0;
 
-    public FriendlyNPC(LocationPair<Float> location, int toward, String name, int activeZone, int width, int height,
-                       int shift_x, int shift_y, @NotNull List<String> s) {
+    public FriendlyNPC(LocationPair<Float> location, int toward, String name, int activeZone, @NotNull List<String> s) {
         super(location, toward, name);
         this.spawn = location.toIntegerPair();
         this.activeZone = activeZone;
-        this.greet = new NpcGreets(this, width, height, shift_x, shift_y, s);
+        this.greet = new NpcGreets(this, s);
     }
 
     @Override
     protected boolean canEntityMoveTo(int side) {
         return Math.abs(this.getSideBlock(side, SIDE_NEXTMIDDLE).getX() - spawn.getX()) <= activeZone &&
-               Math.abs(this.getSideBlock(side, SIDE_NEXTMIDDLE).getY() - spawn.getY()) <= activeZone &&
-               super.canEntityMoveTo(side);
+                Math.abs(this.getSideBlock(side, SIDE_NEXTMIDDLE).getY() - spawn.getY()) <= activeZone &&
+                super.canEntityMoveTo(side);
     }
 
     @Override
@@ -85,8 +84,7 @@ public class FriendlyNPC extends Entity {
         } else {
             if (this.getMoving() != NOTGO) {
                 this.setWonderMoving(NOTGO);
-            }
-            else {
+            } else {
                 this.setWonderMoving(Resource.getRandom().nextInt(8) + 1);
             }
             keepTime = .0f;
@@ -110,7 +108,7 @@ public class FriendlyNPC extends Entity {
         useRefresh = 600;
         GameFrame.getInstance().regisiterDialog(greet);
     }
-    
+
     @Override
     public void onRegisiter() {
 
