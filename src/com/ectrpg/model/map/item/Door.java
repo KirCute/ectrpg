@@ -26,7 +26,7 @@ public class Door extends Item implements Serializable {
     public void onUse() {
         this.setUsingView(1);
         EventManager.getInstance().performedPd(this, this.getTeleport(), toward);
-        System.out.println("Door.onUse");
+        System.out.println("Door.onUse()");
         this.setUsingView(0);
     }
 }

@@ -214,6 +214,7 @@ public final class GameFrame extends Game {
     }
 
     private void readyInDoorAnimation() {
+        // TODO: 18-7-28 Display animation 
         try {
             Thread.sleep(500);
         } catch (InterruptedException e) {
@@ -222,6 +223,7 @@ public final class GameFrame extends Game {
     }
 
     private void inedDoorAnimation() {
+        // TODO: 18-7-28 Display animation 
         try {
             Thread.sleep(500);
         } catch (InterruptedException e) {

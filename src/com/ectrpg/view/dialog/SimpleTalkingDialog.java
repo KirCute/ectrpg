@@ -18,7 +18,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SimpleTalkingDialog implements IDialog, Serializable, IManager {
+public class SimpleTalkingDialog implements IDialog, Seed, IManager {
     public static final int NEXT_POSITION_X = 440;
     public static final int NEXT_POSITION_Y = 130;
     private transient int timer = 0;
@@ -26,15 +26,20 @@ public class SimpleTalkingDialog implements IDialog, Serializable, IManager {
     private transient int direction = 1;
     private transient AttachedObjects bottom;
     private transient AttachedAbstractObjects dialog;
+    private transient List<TimerText> tt;
+    private transient List<FText> textObj;
+    private transient ImageObject next;
     private final SideEffect nextAction;
-    private List<TimerText> tt;
-    private List<FText> textObj;
-    private ImageObject next;
+	private final List<String> s;
 
     public SimpleTalkingDialog(@NotNull List<String> s, @NotNull SideEffect nextAction) {
-        // FIXME: 2018/7/17 0017 Init in init(), not here.
+        this.s = s;
         this.nextAction = nextAction;
-        this.tt = new ArrayList<>();
+    }
+	
+	@Override
+	public void init() {
+		this.tt = new ArrayList<>();
         this.textObj = new ArrayList<>();
         for (String str : s) {
             SimpleText st = new SimpleText(ColorResource.WHITE, "", TalkingDialog.POSITION_X + TalkingDialog.OBJECTS_X,
@@ -51,7 +56,7 @@ public class SimpleTalkingDialog implements IDialog, Serializable, IManager {
         this.tt.get(this.tt.size() - 1).setGroup(this);
         this.next = new ImageObject(ResourcesManager.get(2).part(0, 0, 17, 17), TalkingDialog.POSITION_X + NEXT_POSITION_X,
                 TalkingDialog.POSITION_Y + NEXT_POSITION_Y);
-    }
+	}
 
     @Override
     public void end() {
@@ -115,8 +120,8 @@ public class SimpleTalkingDialog implements IDialog, Serializable, IManager {
             this.next.setRes(ResourcesManager.get(2).part(0, res * 17, 17, 17));
             timer = 5;
             if (Keyboard.isKeyPressed(Keyboard.KEY_USE, Keyboard.STATE_DIALOG)) {
-                nextAction.invoke();
                 GameFrame.getInstance().unRegisiterDialog(this);
+                nextAction.invoke();
             }
         }
     }

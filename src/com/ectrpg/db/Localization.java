@@ -3,7 +3,7 @@ package com.ectrpg.db;
 import org.frice.util.data.Database;
 import org.frice.util.data.Preference;
 
-public class Localization {
+public final class Localization {
     private static String font;
     private static Database text;
     private static int wordWidth;

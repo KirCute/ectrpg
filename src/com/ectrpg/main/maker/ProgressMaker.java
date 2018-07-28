@@ -9,6 +9,7 @@ import com.ectrpg.model.entity.Entity;
 import com.ectrpg.model.entity.FriendlyNPC;
 import com.ectrpg.model.fight.buff.SpeedBuff;
 import com.ectrpg.model.map.item.Item;
+import com.ectrpg.model.mission.Misc;
 import com.ectrpg.model.mission.Progress;
 import com.ectrpg.view.GameFrame;
 import com.ectrpg.view.dialog.SimpleTalkingDialog;
@@ -99,32 +100,51 @@ public final class ProgressMaker {
                     this.setWonderMoving(Entity.NOTGO);
                     this.facePlayer();
                     System.out.println("Changed the state of Keyboard.");
-                    Case progress = new Case(Localization.query("test.entity.prs"), 2, () -> {
+                    Case progress = new Case("test.entity.prs", 2, () -> {
                         Keyboard.setState(Keyboard.STATE_MOVING);
                         acting = true;
                         this.setMoving(moving);
                         this.setWonderMoving(wonderMoving);
                         this.setToward(toward);
                         EventManager.getInstance().performedNp(this, 0);
+                        Resource.regisiterMisc(new Misc() {
+                            @Override
+                            public void invoke() {
+                                if (Resource.getMapId() == 1) {
+                                    this.completed();
+                                    Keyboard.setState(Keyboard.STATE_DIALOG);
+                                    ArrayList<String> str = new ArrayList<>();
+                                    str.add(Localization.query("test.misc"));
+                                    SimpleTalkingDialog std = new SimpleTalkingDialog(str, () -> {
+                                        Keyboard.setState(Keyboard.STATE_MOVING);
+                                    });
+                                    std.init();
+                                    GameFrame.getInstance().regisiterDialog(std);
+                                    System.out.println("Invoked misc.");
+                                }
+                            }
+                        });
                         System.out.println("Progress ID is now 0.");
                         System.out.println("Changed the state of Keyboard.");
                         useRefresh = 40;
                     });
-                    Case hello = new Case(Localization.query("test.entity.faq"), 3, () -> {
+                    Case hello = new Case("test.entity.faq", 3, () -> {
                         ArrayList<String> str = new ArrayList<>();
                         str.add(Localization.query("test.entity.hello1"));
                         str.add(Localization.query("test.entity.hello2"));
-                        GameFrame.getInstance().regisiterDialog(new SimpleTalkingDialog(str, () -> {
+                        SimpleTalkingDialog std = new SimpleTalkingDialog(str, () -> {
                             Keyboard.setState(Keyboard.STATE_MOVING);
                             acting = true;
                             this.setMoving(moving);
                             this.setWonderMoving(wonderMoving);
                             this.setToward(toward);
                             useRefresh = 40;
-                        }));
+                        });
+                        std.init();
+                        GameFrame.getInstance().regisiterDialog(std);
                         System.out.println("Changed the state of Keyboard.");
                     });
-                    Case back = new Case(Localization.query("test.entity.buff"), 4, () -> {
+                    Case back = new Case("test.entity.buff", 4, () -> {
                         Keyboard.setState(Keyboard.STATE_MOVING);
                         acting = true;
                         this.setMoving(moving);
@@ -134,16 +154,21 @@ public final class ProgressMaker {
                         System.out.println("Changed the state of Keyboard.");
                         useRefresh = 40;
                     });
-                    progress.init(hello, null, hello);
-                    hello.init(back, progress, back);
-                    back.init(null, hello, null);
+                    progress.setRelation(hello, null, hello);
+                    hello.setRelation(back, progress, back);
+                    back.setRelation(null, hello, null);
+                    progress.init();
+                    hello.init();
+                    back.init();
                     List<Case> cases = new ArrayList<>();
                     cases.add(progress);
                     cases.add(hello);
                     cases.add(back);
                     ArrayList<String> strs = new ArrayList<>();
                     strs.add(Localization.query("test.entity.title"));
-                    GameFrame.getInstance().regisiterDialog(new TalkingDialog(strs, cases));
+					TalkingDialog dialog = new TalkingDialog(strs, cases);
+					dialog.init();
+                    GameFrame.getInstance().regisiterDialog(dialog);
                 }
                 useRefresh = 10;
             }
@@ -160,7 +185,7 @@ public final class ProgressMaker {
 
 
         /*
-        int progressId = 100;
+        int progressId = 0;
         Map<Integer, Set<Entity>> progressEntities = new HashMap<>();
         Map<Integer, Set<Item>> progressItems = new HashMap<>();
         boolean withDefaultProgress = true;

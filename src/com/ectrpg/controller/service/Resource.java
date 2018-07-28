@@ -10,11 +10,11 @@ import com.ectrpg.model.entity.Entity;
 import com.ectrpg.model.entity.Player;
 import com.ectrpg.model.map.Maps;
 import com.ectrpg.model.map.item.Item;
+import com.ectrpg.model.mission.Misc;
 import com.ectrpg.model.mission.Progress;
 import com.ectrpg.model.save.Save;
 import com.ectrpg.view.GameFrame;
 import org.frice.obj.FObject;
-import org.frice.obj.SideEffect;
 import org.frice.obj.sub.ImageObject;
 import org.frice.obj.sub.ShapeObject;
 import org.frice.resource.graphics.ColorResource;
@@ -24,10 +24,7 @@ import org.frice.util.shape.FRectangle;
 
 import java.io.FileInputStream;
 import java.io.ObjectInputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public final class Resource {
     public static final FObject COLORLESS = new ShapeObject(ColorResource.COLORLESS, new FRectangle(1, 1));
@@ -35,17 +32,17 @@ public final class Resource {
     private static Save save = new Save();
     private static final List<Entity> entities = new ArrayList<>();
     private static final List<ImageObject> entitiesImage = new ArrayList<>();
-    private static final List<ArrayList<ImageResource>> entitiesResources = new ArrayList<>();
+    private static final List<List<ImageResource>> entitiesResources = new ArrayList<>();
     private static final List<Integer> entitiesProgress = new ArrayList<>();
     private static final List<Entity> entitiesBuffer = new ArrayList<>();
     private static final List<ImageObject> entitiesImageBuffer = new ArrayList<>();
-    private static final List<ArrayList<ImageResource>> entitiesResourcesBuffer = new ArrayList<>();
+    private static final List<List<ImageResource>> entitiesResourcesBuffer = new ArrayList<>();
     private static final List<Integer> entitiesProgressBuffer = new ArrayList<>();
     private static final List<Item> items = new ArrayList<>();
     private static final List<ImageObject> itemsImage = new ArrayList<>();
-    private static final List<ArrayList<ImageResource>> itemsResources = new ArrayList<>();
+    private static final List<List<ImageResource>> itemsResources = new ArrayList<>();
     private static final List<Integer> itemsProgress = new ArrayList<>();
-    private static final List<SideEffect> misc = new ArrayList<>();
+    private static final Set<Misc> misc = new HashSet<>();
     private static final Random random = new Random();
     private static FObject mapBlockImage;
     private static FObject mapBackground;
@@ -76,10 +73,10 @@ public final class Resource {
     }
 
     public static void refresh() {
+        invokeMisc();
         entitiesMove();
         playerUse();
         progressReplacer();
-        invokeMisc();
         GameFrame.getInstance().refreshDialog();
         save.refreshTime();
     }
@@ -91,16 +88,16 @@ public final class Resource {
 
     }
 
-    public static void regisiterMisc(SideEffect m) {
+    public static void regisiterMisc(Misc m) {
         misc.add(m);
     }
 
-    public static void unRegisiterMisc(SideEffect m) {
+    public static void unRegisiterMisc(Misc m) {
         misc.remove(m);
     }
 
     private static void invokeMisc() {
-        for (SideEffect m : misc) {
+        for (Misc m : misc) {
             m.invoke();
         }
     }
@@ -218,7 +215,7 @@ public final class Resource {
         return entitiesImage;
     }
 
-    public static List<ArrayList<ImageResource>> getEntitiesResources() {
+    public static List<List<ImageResource>> getEntitiesResources() {
         return entitiesResources;
     }
 
@@ -230,7 +227,7 @@ public final class Resource {
         return itemsImage;
     }
 
-    public static List<ArrayList<ImageResource>> getItemsResources() {
+    public static List<List<ImageResource>> getItemsResources() {
         return itemsResources;
     }
 

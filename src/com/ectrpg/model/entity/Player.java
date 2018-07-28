@@ -12,6 +12,8 @@ import java.util.List;
 public final class Player extends HeartEntity implements Serializable {
     private static final long serialVersionUID = 1010991160112108114L;
     public static final LocationPair<Float> DEFAULT_PLAYER_LOCATION = new LocationPair<>(9F, 7F);
+    private int energy;
+    private int strength;
 
     @Override
     public void onUse() {
@@ -38,7 +40,31 @@ public final class Player extends HeartEntity implements Serializable {
     }
 
     @Override
+    public void setMovingWay(int movingWay) {
+        if (movingWay == MOVING_FASTER && strength < 648000) {
+            return;
+        }
+        super.setMovingWay(movingWay);
+    }
+
+    @Override
     public void action() {
+        if (--energy <= 0) {
+            // TODO: 2018/7/17 0017 Player die of tiredness
+        }
+        if (strength < energy - 360) {
+            strength += 360;
+        } else {
+            strength = energy;
+        }
+        if (this.getMovingWay() == MOVING_FASTER) {
+            strength -= 720;
+            if (this.strength < 216000) {
+                this.setMovingWay(MOVING_NORMAL);
+            }
+        } else if (this.getMovingWay() == MOVING_NORMAL) {
+            strength -= 180;
+        }
         Keyboard.setChange(false);
         this.setMovingWay((Keyboard.isKeyPressed(Keyboard.KEY_FAST, Keyboard.STATE_MOVING) ? Entity.MOVING_FASTER : Entity.MOVING_NORMAL));
         if ((this.getToward() == Entity.TOWARD_UP) || (this.getToward() == Entity.TOWARD_DOWN)) {
@@ -103,5 +129,7 @@ public final class Player extends HeartEntity implements Serializable {
 
     public Player(LocationPair<Float> location, int toward, String name, int heart, byte lives, @NotNull List<Buff> buffs) {
         super(location, toward, name, heart, lives, buffs);
+        this.energy = 6480000;
+        this.strength = energy;
     }
 }

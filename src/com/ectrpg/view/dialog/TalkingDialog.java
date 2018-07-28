@@ -13,11 +13,10 @@ import org.frice.resource.graphics.ColorResource;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TalkingDialog implements IDialog, Serializable, IManager {
+public class TalkingDialog implements IDialog, Seed, IManager {
     //Size of a talking dialog: 480 * 160
     public static final int POSITION_X = 64;
     public static final int POSITION_Y = 320;
@@ -31,17 +30,22 @@ public class TalkingDialog implements IDialog, Serializable, IManager {
     private transient AttachedAbstractObjects dialog;
     private transient boolean ended = false;
     private transient Case selected;
-    private final List<FText> textObj;
-    private final List<TimerText> tt;
-    private final List<Case> cases;
+    private transient List<FText> textObj;
+    private transient List<TimerText> tt;
+    private List<Case> cases;
+	private List<String> s;
 
     public TalkingDialog(@Nullable List<String> s, @NotNull List<Case> cases) {
-        // FIXME: 2018/7/17 0017 Init in init(), not here.
+		this.s = s;
         this.cases = cases;
+    }
+	
+	@Override
+	public void init() {
         for (Case c : this.cases) {
             c.setGroup(this);
         }
-        if (s != null && !s.isEmpty()) {
+		if (s != null && !s.isEmpty()) {
             this.tt = new ArrayList<>();
             this.textObj = new ArrayList<>();
             for (String str : s) {
@@ -62,7 +66,7 @@ public class TalkingDialog implements IDialog, Serializable, IManager {
             this.tt = null;
             this.textObj = null;
         }
-    }
+	}
 
     @Override
     public AttachedAbstractObjects getTopAttachedObjects() {

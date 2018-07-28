@@ -517,7 +517,6 @@ public abstract class Entity implements Serializable, Useable, Regisiterable {
     }
 
     private LocationPair<Integer> getSideBlockForEntity(int side, int nextside) {
-        //TODO
         switch (side) {
             case SIDE_UP:
                 return new LocationPair<>((int) (location.getX() + nextside * 0.9375F), (int) (location.getY() - 1F));
